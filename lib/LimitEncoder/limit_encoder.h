@@ -1,8 +1,14 @@
 
 #include "const.h"
 #include "messages.h"
+#include "Encoder.h"
 
 typedef void (*voidfp)();
+
+
+void updateReport(enum message_code code, uint8_t axis_idx);
+void updateReportSegCompleted();
+void attachLimitInterrupts();
 
 class LimitEncoder {
 
@@ -28,12 +34,14 @@ class LimitEncoder {
 
     LimitEncoder(int axis_n, int pin_a, int pin_b, int pin_i, int pin_l):
       axis_n(axis_n), pin_a(pin_a), pin_b(pin_b), pin_i(pin_i), pin_l(pin_l), encoder(pin_a, pin_b) {
-      //
+      pinMode(pin_l, INPUT_PULLUP);
+      pinMode(pin_i, INPUT_PULLUP);
     }
 
     // Attach the interrupt handler to the limit pin
-    void attach(voidfp funct) {
-      attachInterrupt(digitalPinToInterrupt(pin_l), funct, CHANGE);
+    void attach(voidfp limit_f, voidfp index_f) {
+      attachInterrupt(digitalPinToInterrupt(pin_l), limit_f, CHANGE);
+      attachInterrupt(digitalPinToInterrupt(pin_i), index_f, CHANGE);
     }
 
     int getAxisNumber() {
@@ -120,3 +128,6 @@ class LimitEncoder {
       return last_limit;
     }
 };
+
+LimitEncoder& getEncoder(int i);
+
