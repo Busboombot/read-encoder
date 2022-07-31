@@ -96,10 +96,6 @@ void updateSerial(){
 }
 
 
-void testChangeA(){Serial1.println("Change A");}
-void testChangeB(){Serial1.println("Change B");}
-
-void testChangeI(){Serial1.println("Change I");}
 
 void setup() {
 
@@ -116,7 +112,7 @@ void setup() {
 
   attachLimitInterrupts();
 
-  attachInterrupt(SEG_TRIGGER_PIN, segmentCompleted, RISING);
+  //setupEncoderTest(1);
 
 }
 

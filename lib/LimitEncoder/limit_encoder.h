@@ -9,6 +9,7 @@ typedef void (*voidfp)();
 void updateReport(enum message_code code, uint8_t axis_idx);
 void updateReportSegCompleted();
 void attachLimitInterrupts();
+void setupEncoderTest(int i);
 
 class LimitEncoder {
 
@@ -127,6 +128,10 @@ class LimitEncoder {
     long getLastLimitPos() {
       return last_limit;
     }
+
+private:
+  friend void setupEncoderTest(int i);
+  
 };
 
 LimitEncoder& getEncoder(int i);

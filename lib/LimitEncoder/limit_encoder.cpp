@@ -9,7 +9,7 @@ EncoderReport encoder_report;
 LimitEncoder encoders[N_AXES] = {
   //  A B I E
   LimitEncoder(0, 32, 30, 31, 29), // Bottom Left. A&B may be reversed to change direction
-  LimitEncoder(1, 33, 36, 34, 36),
+  LimitEncoder(1, 33, 35, 34, 36),
   LimitEncoder(2, 10, 11, 12, 24),
   LimitEncoder(3, 13, 14, 15, 16),
   LimitEncoder(4, 17, 18, 19, 20),
@@ -97,3 +97,18 @@ void updateReportSegCompleted(){
 }
 
 
+
+void testChangeA(){Serial1.println("Change: AAA");}
+void testChangeB(){Serial1.println("Change     BBB");}
+void testChangeI(){Serial1.println("Change        III");}
+void testChangeL(){Serial1.println("Change           LLL");}
+
+void setupEncoderTest(int i){
+
+  LimitEncoder &e = getEncoder(i);
+
+  attachInterrupt(e.pin_a, testChangeA, CHANGE);
+  attachInterrupt(e.pin_b, testChangeB, CHANGE);
+  attachInterrupt(e.pin_i, testChangeI, CHANGE);
+  attachInterrupt(e.pin_l, testChangeL, CHANGE);
+}
