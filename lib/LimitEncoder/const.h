@@ -1,0 +1,4 @@
+#define LIMIT_PIN 4
+#define LIMIT_INTR_PIN 33
+#define SEG_TRIGGER_PIN 32
+
