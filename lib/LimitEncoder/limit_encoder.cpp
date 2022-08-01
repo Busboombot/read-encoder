@@ -9,11 +9,12 @@ EncoderReport encoder_report;
 LimitEncoder encoders[N_AXES] = {
   //  A B I E
   LimitEncoder(0, 32, 30, 31, 29), // Bottom Left. A&B may be reversed to change direction
-  LimitEncoder(1, 33, 35, 34, 36),
-  LimitEncoder(2, 10, 11, 12, 24),
-  LimitEncoder(3, 13, 14, 15, 16),
-  LimitEncoder(4, 17, 18, 19, 20),
-  LimitEncoder(5, 25, 26, 27, 28)
+  LimitEncoder(1,  7,  9,  8,  6), // Bottom Center
+  LimitEncoder(2,  3,  5,  4,  2), // Bottom Right
+  LimitEncoder(3, 33, 35, 34, 36), // Top Left
+  LimitEncoder(4, 16, 14, 15, 17), // Top Center
+  LimitEncoder(5, 22, 20, 21, 23), // Top Right
+
 };
 
 LimitEncoder& getEncoder(int i){

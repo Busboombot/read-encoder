@@ -95,8 +95,6 @@ void updateSerial(){
   }
 }
 
-
-
 void setup() {
 
   ps.begin(SERIAL_BAUD);
@@ -112,7 +110,7 @@ void setup() {
 
   attachLimitInterrupts();
 
-  //setupEncoderTest(1);
+  setupEncoderTest(2);
 
 }
 
