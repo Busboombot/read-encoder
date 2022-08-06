@@ -22,11 +22,11 @@ LimitEncoder& getEncoder(int i){
 }
 
 void limit_change(int n) {
-  limits_changed += 1;
   
   for ( int i = 0; i < N_AXES; i++) {
     if (i == n) {
       encoders[i].limitChanged();
+      limits_changed += 1;
     } else {
       encoders[i].limitUnChanged();
     }

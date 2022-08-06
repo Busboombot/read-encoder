@@ -5,8 +5,8 @@
 #include "messages.h"
 #include "limit_encoder.h"
 
-IntervalTimer clearTimer; // Timer for clearing the LIMIT_INTR pin
-IntervalTimer clearLedTimer; // Timer for clearing the LED
+IntervalTimer clearFoundLimitTimer; // Timer for clearing the LIMIT_INTR pin
+
 PacketSerial ps;
 extern EncoderReport encoder_report;
 extern volatile int limits_changed;
@@ -16,27 +16,39 @@ void printReport(){
   Serial1.printf("    ER idx=%d code=%d ", limits_changed, encoder_report.axis_index, encoder_report.code);
   for (int i = 0 ; i < N_AXES; i++){
     Serial1.printf(" (%d,%d) ", encoder_report.limit_states[i], encoder_report.positions[i]);
-
   }
   Serial1.println(' ');
   
 }
+
+void sendReport(){
+  ps.send((const uint8_t*)&encoder_report, sizeof(encoder_report));
+}
+
 void segmentCompleted(){
   updateReportSegCompleted();
-  ps.send((const uint8_t*)&encoder_report, sizeof(encoder_report));
-  //Serial1.printf("Seg complete idx=%d code=%d ", limits_changed, encoder_report.axis_index, encoder_report.code);
-  //printReport();
+  sendReport();
+}
+
+void clearFoundLimit(){
+    clearFoundLimitTimer.end();
+    digitalWriteFast(LIMIT_INTR_PIN, LOW);
 }
 
 void sendReportOnChange(){
+
   if ( limits_changed > 0){
     ps.send((const uint8_t*)&encoder_report, sizeof(encoder_report));
-    //Serial1.printf("%d limits_changed idx=%d code=%d ", limits_changed, encoder_report.axis_index, encoder_report.code);
-    //printReport();
+
+    clearFoundLimitTimer.begin(clearFoundLimit,4); 
+    digitalWriteFast(LIMIT_INTR_PIN, HIGH);
+    sendReport();
+   
     limits_changed =0;
   }
-
 }
+
+
 
 void loopTick()    {
     static unsigned long last = millis();
@@ -44,6 +56,7 @@ void loopTick()    {
     
     if( millis() - last > 1000  ){
       digitalWrite(LED_BUILTIN, (ledToggle = !ledToggle));
+     
       last = millis();
     }
 }
@@ -74,6 +87,7 @@ void updateSerial(){
           getEncoder(i).limitUnChanged();
         }
         updateReport(MC_ZERO,0);
+        sendReport();
         break;
       case 'p': // Poll the encoders
         Serial1.println("Poll requested");
@@ -81,6 +95,7 @@ void updateSerial(){
           getEncoder(i).limitUnChanged();
         }
         updateReport(MC_POLL,0);
+        sendReport();
         break;
       case 's': // Set Values
         Serial1.println("Set Values");
@@ -110,7 +125,7 @@ void setup() {
 
   attachLimitInterrupts();
 
-  setupEncoderTest(2);
+  //setupEncoderTest(2);
 
 }
 
